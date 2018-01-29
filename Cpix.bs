@@ -5,15 +5,15 @@ ED: https://dashif.org/guidelines/
 Shortname: cpix
 Level: none
 Editor: Firstname Lastname
-Abstract: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla condimentum posuere mauris, eget dapibus justo porta a. Pellentesque placerat magna at massa semper, id varius nisi malesuada. Cras consequat eleifend velit et dapibus. Ut libero sem, molestie a velit sed, sollicitudin accumsan orci. Proin vel faucibus elit. Donec id nisl a magna accumsan euismod id vitae erat. Quisque eget tortor non arcu hendrerit placerat in vitae nibh. Suspendisse scelerisque ligula vitae orci imperdiet laoreet. Duis a metus dui. Sed efficitur mattis diam, vitae tincidunt mi. Mauris id scelerisque metus, in maximus nisi. Sed turpis sapien, rhoncus id velit vel, cursus placerat ex.
+Abstract: None
 
 Date: 2016-11-09
 Issue Tracking: GitHub https://github.com/Dash-Industry-Forum/CPIX/issues
 Repository: https://github.com/Dash-Industry-Forum/CPIX GitHub
-Default Highlight: xml
+Default Highlight: text
 Line Numbers: on
 Markup Shorthands: markdown yes
-Boilerplate: copyright off
+Boilerplate: copyright off, abstract off
 </pre>
 
 <pre class="biblio">
@@ -23,15 +23,15 @@ Boilerplate: copyright off
 		"title": "Guidelines for Implementation: DASH-IF Interoperability Points, version 3.3",
 		"publisher": "DASH Industry Forum"
 	},
+	"CPIX-XML": {
+		"href": "https://dashif.org/guidelines/",
+		"title": "CPIX XML Examples",
+		"publisher": "DASH Industry Forum"
+	},
 	"CPIX-XSD": {
 		"href": "https://dashif.org/guidelines/",
 		"title": "CPIX XML Schema",
 		"publisher": "DASH Industry Forum"
-	},
-	"XML-DSIG": {
-		"href": "https://www.w3.org/TR/xmldsig-core/",
-		"title": "XML Signature Syntax and Processing (Second edition)",
-		"publisher": "W3C"
 	}
 }
 </pre>
@@ -52,6 +52,14 @@ This specification describes version 2.0 of the CPIX document. Changes with resp
 * It allows for supporting additional DRM signaling schemes by allowing alternative types of DRM signaling elements.
 * Sets of elements can be authenticated by means of XML element signing.
 * Versioning has been added so that the history of added elements can be tracked
+
+# Disclaimer # {#disclaimer}
+
+This is a document made available by DASH-IF.  The technology embodied in this document may involve the use of intellectual property rights, including patents and patent applications owned or controlled by any of the authors or developers of this document. No patent license, either implied or express, is granted to you by this document. DASH-IF has made no search or investigation for such rights and DASH-IF disclaims any duty to do so. The rights and obligations which apply to DASH-IF documents, as such rights and obligations are set forth and defined in the DASH-IF Bylaws and IPR Policy including, but not limited to, patent and other intellectual property license rights and obligations. A copy of the DASH-IF Bylaws and IPR Policy can be obtained at http://dashif.org/.
+
+The material contained herein is provided on an "AS IS" basis and to the maximum extent permitted by applicable law, this material is provided AS IS, and the authors and developers of this material and DASH-IF hereby disclaim all other warranties and conditions, either express, implied or statutory, including, but not limited to, any (if any) implied warranties, duties or conditions of merchantability, of fitness for a particular purpose, of accuracy or completeness of responses, of workmanlike effort, and of lack of negligence.
+
+In addition, this document may include references to documents and/or technologies controlled by third parties.  Those third party documents and technologies may be subject to third party rules and licensing terms.  No intellectual property license, either implied or express, to any third party material is granted to you by this document or DASH-IF.  DASH-IF makes no any warranty whatsoever for such third party material.
 
 # Introduction # {#main-intro}
 
@@ -422,7 +430,7 @@ Taking this into account, the CPIX document contains lists of elements:
 * ContentKeyPeriodList: This list contains instances of ContentKeyPeriod, each of which defines a time period that may be referenced by the key period filters included in Content Key usage rules.
 * ContentKeyUsageRuleList: This list contains instances of ContentKeyUsageRule, which maps a Content Key to one or more Content Key Contexts.
 * UpdateHistoryItemList: This list contains instances of UpdateHistoryItem, each of which contains an update version number and an identifier of the entity which produced the update. Other elements in the document are linked to a specific update by update version number (@updateVersionNumber).
-* Signature: Each instance of this element contains a digital signature [[!XML-DSIG]] over either the entire document or a subset of XML elements.
+* Signature: Each instance of this element contains a digital signature [[!XMLDSIG-CORE]] over either the entire document or a subset of XML elements.
 
 The Content Keys can be encrypted inside the XML file using the public keys of the recipients, identified in the DeliveryData elements. The XML file also allows storing the Content Keys in the clear, in which case the security of the Content Keys is contingent on the security of the communication channel used to deliver the CPIX document to the recipients.
 
@@ -437,13 +445,16 @@ The figure below shows the first elements and a high-level view of the structure
 
 In this section the following conventions are used:
 
-* Referenced elements are surrounded by `<angle brackets>`, referenced attributes `without decoration`.
-* Child elements are suffixed with the number of elements allowed (`min...max`) where N means unbounded.
-* Attributes are suffixed with a symbol meaning M=Mandatory, O=Optional, OD=Optional with Default Value, CM=Conditionally Mandatory.
+* Element names are in `PascalCase` and attribute names are in `camelCase`.
+* Each type member is suffixed with its use requirements and its data type.
+* Child element use requirements specify the number of elements allowed (`min...max`) where N means unbounded.
+* Attribute use requirements indicate M=Mandatory, O=Optional, OD=Optional with Default Value, CM=Conditionally Mandatory.
 
 Child elements must be in the order specified here. Attributes may be in any order.
 
 The XSD schema for this model is provided in [[!CPIX-XSD]].
+
+In addition to types defined in this document, the CPIX data model references types defined in [[!XMLSCHEMA11-2]], [[!RFC6030]], [[!XMLDSIG-CORE]] and [[!XMLENC-CORE]]. External data types are prefixed with `xs:`, `pskc:`, `ds:` and `xenc:` accordingly.
 
 ### <dfn element>CPIX</dfn> element ### {#schema-cpix}
 
@@ -451,38 +462,38 @@ The root element that carries the Content Protection Information for a set of me
 
 <dl dfn-type="element-attr" dfn-for="CPIX">
 
-: <dfn>id</dfn> (O)
+: <dfn>id</dfn> (O, xs:ID)
 :: It specifies an identifier for the CPIX document. It is recommended to use an identifier that is unique within the scope in which this file is published.
 
-: <dfn>contentId</dfn> (O)
+: <dfn>contentId</dfn> (O, xs:string)
 :: It specifies an identifier for the asset or content that is been protected by the keys carried in this CPIX document. It is recommended to use an identifier that is unique within the scope in which this file is published.
 
-: <dfn>name</dfn> (O)
+: <dfn>name</dfn> (O, xs:string)
 :: The name of the Presentation.
 
-: <dfn><{DeliveryDataList}></dfn> (0...1)
+: <dfn>DeliveryDataList</dfn> (0...1, <{DeliveryDataList}>)
 :: A container for <{DeliveryData}> elements.
 :: If not present, Content Keys in the document are delivered in the clear, without encryption.
 
-: <dfn><{ContentKeyList}></dfn> (0...1)
+: <dfn>ContentKeyList</dfn> (0...1, <{ContentKeyList}>)
 :: A container for <{ContentKey}> elements.
 
-: <dfn><{DRMSystemList}></dfn> (0...1)
+: <dfn>DRMSystemList</dfn> (0...1, <{DRMSystemList}>)
 :: A container for <{DRMSystem}> elements.
 :: If not present, the document does not contain any DRM system signaling data.
 
-: <dfn><{ContentKeyPeriodList}></dfn> (0...1)
+: <dfn>ContentKeyPeriodList</dfn> (0...1, <{ContentKeyPeriodList}>)
 :: A container for <{ContentKeyPeriod}> elements.
 
-: <dfn><{ContentKeyUsageRuleList}></dfn> (0...1)
+: <dfn>ContentKeyUsageRuleList</dfn> (0...1, <{ContentKeyUsageRuleList}>)
 :: Container for <{ContentKeyUsageRule}> elements.
 :: If not present, the document does not define [=Content Key Contexts=] and an external mechanism is required for synchronizing the content creation workflow.
 
-: <dfn><{UpdateHistoryItemList}></dfn> (0...1)
+: <dfn>UpdateHistoryItemList</dfn> (0...1, <{UpdateHistoryItemList}>)
 :: Container for <{UpdateHistoryItem}> elements.
 
-: <dfn><{Signature}></dfn> (0...N)
-:: Digital signature as defined in [[!XML-DSIG]]. Each signature signs either the full document or any set of elements within the CPIX document.
+: <dfn>Signature</dfn> (0...N, ds:Signature)
+:: Digital signature as defined in [[!XMLDSIG-CORE]]. Each signature signs either the full document or any set of elements within the CPIX document.
 :: Every digital signature must contain an X.509 certificate identifying the signer and the associated public key.
 
 </dl>
@@ -493,13 +504,13 @@ The root element that carries the Content Protection Information for a set of me
 
 <dl dfn-type="element-attr" dfn-for="DeliveryDataList">
 
-: <dfn>id</dfn> (O)
+: <dfn>id</dfn> (O, xs:ID)
 :: Specifies an identifier for the element. It is recommended to use an identifier that is unique within the scope in which this CPIX document is published.
 
-: <dfn>updateVersion</dfn> (O)
-:: Has the same value as the <{UpdateHistoryItem/id}> attribute of the <{CPIX/UpdateHistoryItem}> element, giving details on when the *DeliveryDataList* element was added.
+: <dfn>updateVersion</dfn> (O, xs:ID)
+:: Has the same value as the id attribute of the <{UpdateHistoryItem}> element, giving details on when the *DeliveryDataList* element was added.
 
-: <{DeliveryData}> (0...N)
+: <dfn>DeliveryData</dfn> (0...N, <{DeliveryData}>)
 :: Contains the required information allowing defining which entities can get access to the Content Keys delivered in this document.
 :: There is one *DeliveryData* element per entity capable of accessing encrypted [=Content Keys=] stored in this document. If this element is not present, then the Content Keys are in the clear in the file.
 
@@ -511,39 +522,292 @@ The root element that carries the Content Protection Information for a set of me
 
 <dl dfn-type="element-attr" dfn-for="DeliveryData">
 
-: <dfn>id</dfn> (O)
+: <dfn>id</dfn> (O, xs:ID)
 :: Specifies an identifier for the element. It is recommended to use an identifier that is unique within the scope in which this CPIX document is published.
 
-: <dfn>updateVersion</dfn> (O)
-:: Has the same value as the <{UpdateHistoryItem/id}> attribute of the <{CPIX/UpdateHistoryItem}> element, giving details on when the *DeliveryDataList* element was added.
+: <dfn>updateVersion</dfn> (O, xs:ID)
+:: Has the same value as the id attribute of the <{UpdateHistoryItem}> element, giving details on when the *DeliveryDataList* element was added.
 
-: <dfn>name</dfn> (O)
+: <dfn>name</dfn> (O, xs:string)
 :: Name of the Delivery Data.
 
-: <dfn><{DeliveryKey}></dfn> (1)
+: <dfn>DeliveryKey</dfn> (1, ds:KeyInfoType)
 :: Contains an X.509 certificate that identifies the intended recipient and the public key that was used to encrypt the document key.
-:: Refer to Section 4.1 for a description of the key management within the CPIX document.
+:: Refer to [[#keys-enc]] for a description of the key management within the CPIX document.
 
-: <dfn><{DocumentKey}></dfn> (1)
+: <dfn>DocumentKey</dfn> (1, TODO this data type is missing from CPIX spec)
 :: Contains the key that was used for encrypting any Content Key stored in a ContentKey element. The document key is encrypted using the public key listed in the recipient’s X.509 certificate.
-:: Refer to Section 4.1 for a description of the key management within the CPIX document.
+:: Refer to [[#keys-enc]] for a description of the key management within the CPIX document.
 
-: <dfn><{MACMethod}></dfn> (0...1)
+: <dfn>MACMethod</dfn> (0...1, pskc:MACMethodType)
 :: Identifies the MAC algorithm and contains the MAC key used to implement authenticated encryption of Content Keys. The MAC key is encrypted using the public key listed in the recipient’s X.509 certificate.
 :: Refer to Section 4.1 for a description of the key management within the CPIX document.
 
-: <dfn><{Description}></dfn> (0...1)
+: <dfn>Description</dfn> (0...1, xs:string)
 :: A description of the element.
 
-: <dfn><{SendingEntity}></dfn> (0...1)
+: <dfn>SendingEntity</dfn> (0...1, xs:string)
 :: The name, of the entity generating this CPIX document.
 
-: <dfn><{SenderPointOfContact}></dfn> (0...1)
+: <dfn>SenderPointOfContact</dfn> (0...1, xs:string)
 :: Contact information, such as an email address, of the Sender.
 
-: <dfn><{ReceivingEntity}></dfn> (0...1)
+: <dfn>ReceivingEntity</dfn> (0...1, xs:string)
 :: The name, of the entity capable of decrypting Content Keys in this CPIX document.
 
 </dl>
 
 <img src="Schema-DeliveryData.png" />
+
+### <dfn element>ContentKeyList</dfn> element ### {#schema-contentkeylist}
+
+Note: section intentionally omitted from experiment.
+
+### <dfn element>ContentKey</dfn> element ### {#schema-contentkey}
+
+Note: section intentionally omitted from experiment.
+
+### <dfn element>DRMSystemList</dfn> element ### {#schema-drmsystemlist}
+
+Note: section intentionally omitted from experiment.
+
+### <dfn element>DRMSystem</dfn> element ### {#schema-drmsystem}
+
+Note: section intentionally omitted from experiment.
+
+### <dfn element>ContentKeyPeriodList</dfn> element ### {#schema-contentkeyperiodlist}
+
+Note: section intentionally omitted from experiment.
+
+### <dfn element>ContentKeyPeriod</dfn> element ### {#schema-contentkeyperiod}
+
+Note: section intentionally omitted from experiment.
+
+### <dfn element>ContentKeyUsageRuleList</dfn> element ### {#schema-contentkeyusagerulelist}
+
+Note: section intentionally omitted from experiment.
+
+### <dfn element>ContentKeyUsageRule</dfn> element ### {#schema-contentkeyusagerule}
+
+Note: section intentionally omitted from experiment.
+
+### <dfn element>KeyPeriodFilter</dfn> element ### {#schema-keyperiodfilter}
+
+Note: section intentionally omitted from experiment.
+
+### <dfn element>LabelFilter</dfn> element ### {#schema-labelfilter}
+
+Note: section intentionally omitted from experiment.
+
+### <dfn element>VideoFilter</dfn> element ### {#schema-videofilter}
+
+Note: section intentionally omitted from experiment.
+
+### <dfn element>AudioFilter</dfn> element ### {#schema-audiofilter}
+
+Note: section intentionally omitted from experiment.
+
+### <dfn element>BitrateFilter</dfn> element ### {#schema-bitratefilter}
+
+Note: section intentionally omitted from experiment.
+
+### <dfn element>UpdateHistoryItemList</dfn> element ### {#schema-updatehistoryitemlist}
+
+Note: section intentionally omitted from experiment.
+
+### <dfn element>UpdateHistoryItem</dfn> element ### {#schema-updatehistoryitem}
+
+Note: section intentionally omitted from experiment.
+
+# Key management # {#keys}
+
+## Key Encryption in the CPIX Document ## {#keys-enc}
+
+### Introduction ### {#keys-enc-intro}
+
+The CPIX document allows exchanging Content Keys in the clear but this is not a recommended method as it relies on the security of the communication mechanism used to deliver the CPIX document to the recipients, which may not be sufficient to adequately protect the Content Keys.
+
+Content Keys can be delivered encrypted within the document itself and in this case, a multi-level structure of encryption keys is used for an efficient encryption avoiding duplication of encrypted content and expensive encryption methods. This section describes the mechanism that shall be used when encryption of the Content Keys in the document is used.
+
+### Keys Used to Secure the CPIX Document ### {#keys-enc-keytypes}
+
+The document contains the following keys:
+
+[=Content Keys=]--
+Each ContentKey Element contains one Content Key that is used for encrypting an asset or crypto period of an asset or that acts as a dependency for the use of other Content Keys (when a key hierarchy is used). Typically, for Common Encryption as supported in [[!DASH-IF-IOP]], these keys are 128-bit keys used with the AES cipher.
+
+[=Document Key=]--
+For every CPIX document, a Document Key is created. It is used for encrypting every Content Key. The Document Key is a 256-bit key and the encryption algorithm used for encrypting every Content Key is AES. The Document Key is part of each <{DeliveryData}> element. It is itself encrypted in the document, using the public key of each recipient.
+
+<dfn>Delivery Keys</dfn>--
+Each <{DeliveryData}> element identifies a Delivery Key, which is a public key from a key pair owned by the intended recipient. The Delivery Key is identified in the DeliveryData element by including the X.509 certificate of the intended recipient. The Delivery Key is used for encrypting the Document Key using an algorithm that is described within the CPIX document, according to [[!XMLENC-CORE]].
+
+---
+
+The below figure gives the schema of encryption of the different keys when there are several DeliveryData elements and several ContentKey Elements. The Document Key allows reducing the numbers of ContentKey Elements as the Content Key they contain are all encrypted by the same Document Key.
+
+<figure>
+	<img src="CpixKeys.png" />
+	<figcaption>Keys Used to Secure the CPIX document.</figcaption>
+</figure>
+
+### Authenticated Encryption ### {#keys-enc-mac}
+
+**MAC Key**
+
+For every CPIX document, a MAC Key is created. It is used to calculate the MAC of every encrypted [=Content Key=]. The <{DeliveryData}> element identifies the MAC algorithm and provides the MAC Key, encrypted with the [=Delivery Key=], for each recipient.
+
+**Authenticated Encryption of Content Keys**
+
+Implementations SHALL provide a MAC for every encrypted Content Key and SHALL verify the MAC before attempting to decrypt any encrypted Content Key. The purpose of the MAC is to protect against cryptographic vulnerabilities in the receiving application; it is not used as a general purpose authentication mechanism.
+
+The MAC is calculated over the data in the *CipherValue* element (the concatenated IV and encrypted Content Key) and stored in the *ValueMac* element under the Secret element for each encrypted Content Key.
+
+### Digital Signature ### {#keys-enc-signatures}
+
+Every element in the document that has an @id attribute can be signed according to [[!XMLDSIG-CORE]]. Furthermore, the document (including any other signatures) can be signed as a whole.
+
+Upon loading a CPIX document, implementations SHOULD verify that signatures are present on entities that are expected to be signed and verify all digital signatures that are present. Implementations SHOULD refuse to process a document if expected signatures are missing or if the signatures cannot be verified or if the signers are not trusted as authoritative sources for the signed data.
+
+Implementations SHOULD sign any elements that recipients wish to authenticate. Note that modifying any signed data will require any signatures on the data to be removed and/or re-applied – this requires the appropriate consideration and trust model design in content processing workflow creation (out of scope of this specification).
+
+### Mandatory Algorithms ### {#keys-enc-algorithms}
+
+The following table gives the identification of the algorithms that shall be used for encryption, signature, MAC creation.
+
+<table>
+	<tr>
+		<th>Usage</th>
+		<th>Algorithm</th>
+	</tr>
+	<tr>
+		<td>Content Key wrapping</td>
+		<td>AES256-CBC, PKCS #7 padding</td>
+	</tr>
+	<tr>
+		<td>Encrypted key MAC</td>
+		<td>HMAC-SHA512</td>
+	</tr>
+	<tr>
+		<td>Document Key wrapping</td>
+		<td>RSA-OAEP-MGF1-SHA1</td>
+	</tr>
+	<tr>
+		<td>Digital signature</td>
+		<td>RSASSA-PKCS1-v1_5</td>
+	</tr>
+	<tr>
+		<td>Digital signature digest</td>
+		<td>SHA-512</td>
+	</tr>
+	<tr>
+		<td>Digital signature canonicalization</td>
+		<td>Canonimal XML 1.0 (omits comments)</td>
+	</tr>
+</table>
+
+For RSA, the recommended minimum key size is 3072 bits and is it not recommended to use certificates that are signed using SHA-1.
+
+## Key Rotation Support ### {#keys-rotation}
+
+A CPIX document can contain content protection information for multiple crypto-periods, or period of time for content encrypted using key rotation. In this case, the document shall contain one or more ContentKey elements, one per crypto-period which the document covers. Each ContentKey element contains the key material for a single crypto-period. The crypto-period itself is identified by the <{ContentKeyPeriod}> element, that includes @start/@end or @index attributes.
+
+Key rotation may be supported in complex workflows, with one entity requesting DRM signaling for multiple crypto periods, and another entity providing the requested information (keys, DRM system-specific information for the crypto period, etc).
+
+## Hierarchical Keys ### {#keys-hierarchies}
+
+Some DRM systems support the use of hierarchical keys, where the keys used to encrypt media samples (leaf keys) are not usable without a second set of keys (root keys). The mechanism by which root keys are used to protect leaf keys is DRM system specific.
+
+CPIX supports expressing two-level key hierarchies, where each leaf key has exactly one root key that is required in order to use the leaf key. Both root keys and leaf keys are represented using ContentKey elements, with leaf keys indicated by the presence of a @dependsOnKey reference to the root key as described in [[#schema-contentkey]].
+
+When using hierarchical keys, only the leaf keys shall be used to encrypt media content. Therefore, root keys must not be referenced by any <{ContentKeyUsageRule}> elements.
+
+The usage of DRM system signaling data is different when hierarchical keys are used. The differences are described in [[#schema-drmsystem]].
+
+Any DRM system specific functionality associated with key hierarchies exists on the DRM layer. It may affect the DRM system signaling data but not the keys themselves.
+
+# XML Examples # {#examples}
+
+The zip file available on DASH-IF web site contains four examples of XML files [[[CPIX-XML]. The XML example files are syntactically correct but do not contain real data. For examples, signature and encrypted data are dummy data. Examples with valid data can be found at https://github.com/Axinom/cpix-test-vectors.
+
+## Encrypted Keys ## {#examples-encrypted-keys}
+
+This example shows a CPIX document where keys can be decrypted by two entities (“Authorization Service 1234” and “Authorization Service 5678”). Both are identified by their X509 certificates.
+
+The [=Content Key=] is encrypted by the [=Document Key=], the Document Key is therefore encrypted two times (once for Authorization Service 1234 and once for Authorization Service 5678).
+
+In term of DRMs, there are two different DRMs that can be used for accessing content. There are therefore two <{DRMSystem}> elements.
+
+## Clear Keys ## {#examples-clear-keys}
+
+This example shows a CPIX document where keys are not encrypted. It can be read by any entity and therefore does not contain <{DeliveryData}> elements.
+
+The [=Content Key=] is available as plain data.
+
+In term of DRMs, there are two different DRMs that can be used for accessing the content. There are therefore two <{DRMSystem}> elements.
+
+## Hierarchical Keys ## {#examples-hierarchical-keys}
+
+This example shows a CPIX document where a key hierarchy is defined. Leaf keys have the key data included, whereas root keys do not. DRM system signaling is present for both types of keys as is necessary for DASH content packaging.
+
+## Multiple Updates ## {#examples-multiple-updates}
+
+This example, consisting of multiple files (v1...v3), shows a CPIX document which has been built up by successive updates by various entities as illustrated in [[#usecase-incremental-authoring]]. The document has three <{UpdateHistoryItem}> elements within it referencing the entities which performed the updates. Various elements in the document reference the UpdateHistoryItem for the update in which they were added by UpdateVersion.
+
+It contains two [=Content Keys=]. The keys can be decrypted by the entity “DRM System 1234”. The document contains information for a single DRM system, so it only contains a single <{DRMSystem}> element.
+
+## Key Rotation ## {#examples-key-rotation}
+
+This example shows a CPIX document where keys can be decrypted by two entities (“Authorization Service 1234” and “Authorization Service 5678”). Both are identified by their X509 certificates.
+
+It contains two Content Keys for two cryptoperiods. Two <{ContentKeyPeriod}> elements with by their start and end times are added, each referencing one ContentKey element using a <{KeyPeriodFilter}> element. The Content Key is encrypted by the Document Key, the Document Key is therefore encrypted two times (once for Authorization Service 1234 and once for Authorization Service 5678).
+
+In addition, the document contains <{DRMSystem}> elements for the two DRM systems.
+
+# Transfer Protocol # {#transfer-protocol}
+
+The preferred method of exchange of CPIX documents between entities is through a RESTful API. This API is defined as follows:
+
+```text
+[BaseURL]/copyProtectionData/{{CPIX_ID}}
+Where [BaseURL] is the scheme and host(e.g. https://acme-drm-service.com) of the target resource.
+Method: POST
+Behaviour: The request to create copyProtectionData for an encryptor.
+RequestBody:
+Element: //CPIX
+Definition: A CPIX element.
+ResponseBody:
+Element: //CPIX
+Definition: A CPIX element.
+
+—
+[BaseURL]/copyProtectionData/{{CPIX_ID}}
+Where [BaseURL] is the scheme and host(e.g. https://acme-drm-service.com) of the target resource.
+Method: GET
+Behaviour: Return copyProtectionData for the referenced CPIX_ID.
+RequestBody:
+Element: NONE
+ResponseBody:
+Element: //CPIX
+Definition: A CPIX element.
+
+—
+[BaseURL]/copyProtectionData/{{CPIX_ID}}
+Where [BaseURL] is the scheme and host(e.g. https://acme-drm-service.com) of the target resource.
+Method: PUT
+Behaviour: Update copyProtectionData referenced by the CPIX_ID
+RequestBody:
+Element: //CPIX
+Definition: A CPIX element.
+ResponseBody:
+Element: NONE
+—
+[BaseURL]/copyProtectionData/{{CPIX_ID}}
+Where [BaseURL] is the scheme and host(e.g. https://acme-drm-service.com) of the target resource.
+Method: DELETE
+Behaviour: Delete/purge copyProtectionData referenced by the CPIX_ID.
+RequestBody:
+Element: NONE
+ResponseBody:
+Element: NONE
+```
