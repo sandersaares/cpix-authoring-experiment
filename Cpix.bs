@@ -708,13 +708,13 @@ The following table gives the identification of the algorithms that shall be use
 
 For RSA, the recommended minimum key size is 3072 bits and is it not recommended to use certificates that are signed using SHA-1.
 
-## Key Rotation Support ### {#keys-rotation}
+## Key Rotation Support ## {#keys-rotation}
 
 A CPIX document can contain content protection information for multiple crypto-periods, or period of time for content encrypted using key rotation. In this case, the document shall contain one or more ContentKey elements, one per crypto-period which the document covers. Each ContentKey element contains the key material for a single crypto-period. The crypto-period itself is identified by the <{ContentKeyPeriod}> element, that includes @start/@end or @index attributes.
 
 Key rotation may be supported in complex workflows, with one entity requesting DRM signaling for multiple crypto periods, and another entity providing the requested information (keys, DRM system-specific information for the crypto period, etc).
 
-## Hierarchical Keys ### {#keys-hierarchies}
+## Hierarchical Keys ## {#keys-hierarchies}
 
 Some DRM systems support the use of hierarchical keys, where the keys used to encrypt media samples (leaf keys) are not usable without a second set of keys (root keys). The mechanism by which root keys are used to protect leaf keys is DRM system specific.
 
@@ -780,7 +780,7 @@ ResponseBody:
 Element: //CPIX
 Definition: A CPIX element.
 
-—
+-
 [BaseURL]/copyProtectionData/{{CPIX_ID}}
 Where [BaseURL] is the scheme and host(e.g. https://acme-drm-service.com) of the target resource.
 Method: GET
@@ -791,7 +791,7 @@ ResponseBody:
 Element: //CPIX
 Definition: A CPIX element.
 
-—
+-
 [BaseURL]/copyProtectionData/{{CPIX_ID}}
 Where [BaseURL] is the scheme and host(e.g. https://acme-drm-service.com) of the target resource.
 Method: PUT
@@ -801,7 +801,8 @@ Element: //CPIX
 Definition: A CPIX element.
 ResponseBody:
 Element: NONE
-—
+
+-
 [BaseURL]/copyProtectionData/{{CPIX_ID}}
 Where [BaseURL] is the scheme and host(e.g. https://acme-drm-service.com) of the target resource.
 Method: DELETE
