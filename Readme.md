@@ -10,6 +10,10 @@ The main components of the experimental workflow are:
 
 The emphasis of the first experiment is to determine whether current editors are comfortable with the file format.
 
+# Example output
+
+See http://media.axprod.net/temp/cpix-authoring-experiment/
+
 # Tools required
 
 For editing the Bikeshed file format, Visual Studio Code is a relatively convenient editor, supporting basic syntax highlighting and integrating very well with Git source control.
