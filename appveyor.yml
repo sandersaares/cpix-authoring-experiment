@@ -5,6 +5,7 @@ install:
 
 build_script:
   - ps: Write-Host "This is, like, a build, yo!"
+  - ps: Write-Error "This is, like, a build error!"
 
 artifacts:
   - path: '*.bs'
