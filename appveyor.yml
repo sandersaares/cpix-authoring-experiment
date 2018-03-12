@@ -7,4 +7,4 @@ build_script:
   - ps: Write-Host "This is, like, a build, yo!"
 
 artifacts:
-  - path: *.bs
+  - path: '*.bs'
