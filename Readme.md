@@ -2,6 +2,8 @@
 
 The example content is based on a partially converted CPIX 2.1 draft 8. It is not meant to be used for "real world usage", just as a document authoring experiment.
 
+This branch is just a test.
+
 The main components of the experimental workflow are:
 
 1. The document is authored using Bikeshed format, which is a mixture of HTML and Markdown.
